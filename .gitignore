@@ -16,6 +16,7 @@ build/
 # IDE
 .idea/
 .vscode/
+.opencode/
 *.swp
 *.swo
 *~
@@ -23,6 +24,12 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# Documentation
+docs/
+
+# Batch scripts
+*.bat
 
 # Testing
 .pytest_cache/
