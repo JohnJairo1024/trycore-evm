@@ -11,10 +11,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.activity import Activity
 from app.schemas.activity import ActivityCreate, ActivityUpdate
+from app.services.base_service import BaseService
 
 
-class ActivityService:
+class ActivityService(BaseService[Activity, ActivityUpdate]):
     """Handles all activity-related business logic."""
+
+    _model = Activity
 
     def __init__(self, db: AsyncSession):
         self.db = db
@@ -53,31 +56,3 @@ class ActivityService:
             .order_by(Activity.created_at)
         )
         return result.scalars().all()
-
-    async def update(
-        self,
-        activity_id: uuid.UUID,
-        data: ActivityUpdate,
-    ) -> Activity | None:
-        """Update an existing activity. Returns None if not found."""
-        activity = await self.get_by_id(activity_id)
-        if not activity:
-            return None
-
-        update_data = data.model_dump(exclude_unset=True)
-        for field, value in update_data.items():
-            setattr(activity, field, value)
-
-        await self.db.flush()
-        await self.db.refresh(activity)
-        return activity
-
-    async def delete(self, activity_id: uuid.UUID) -> bool:
-        """Delete an activity. Returns True if deleted, False if not found."""
-        activity = await self.get_by_id(activity_id)
-        if not activity:
-            return False
-
-        await self.db.delete(activity)
-        await self.db.flush()
-        return True

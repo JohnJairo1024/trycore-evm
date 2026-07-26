@@ -10,10 +10,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.project import Project
 from app.schemas.project import ProjectCreate, ProjectUpdate
+from app.services.base_service import BaseService
 
 
-class ProjectService:
+class ProjectService(BaseService[Project, ProjectUpdate]):
     """Handles all project-related business logic."""
+
+    _model = Project
 
     def __init__(self, db: AsyncSession):
         self.db = db
@@ -43,11 +46,9 @@ class ProjectService:
         limit: int = 100,
     ) -> tuple[Sequence[Project], int]:
         """List projects with pagination. Returns (items, total_count)."""
-        # Get total count
         count_result = await self.db.execute(select(func.count(Project.id)))
         total = count_result.scalar() or 0
 
-        # Get paginated items
         result = await self.db.execute(
             select(Project)
             .order_by(Project.created_at.desc())
@@ -57,27 +58,3 @@ class ProjectService:
         items = result.scalars().all()
 
         return items, total
-
-    async def update(self, project_id: uuid.UUID, data: ProjectUpdate) -> Project | None:
-        """Update an existing project. Returns None if not found."""
-        project = await self.get_by_id(project_id)
-        if not project:
-            return None
-
-        update_data = data.model_dump(exclude_unset=True)
-        for field, value in update_data.items():
-            setattr(project, field, value)
-
-        await self.db.flush()
-        await self.db.refresh(project)
-        return project
-
-    async def delete(self, project_id: uuid.UUID) -> bool:
-        """Delete a project. Returns True if deleted, False if not found."""
-        project = await self.get_by_id(project_id)
-        if not project:
-            return False
-
-        await self.db.delete(project)
-        await self.db.flush()
-        return True
