@@ -56,6 +56,8 @@ class ActivityEVMResponse(BaseModel):
         description="Human-readable SPI interpretation",
     )
 
+    model_config = {"json_encoders": {Decimal: float}}
+
 
 # ── Project-level EVM ────────────────────────────────────────────
 
@@ -82,3 +84,5 @@ class ProjectEVMResponse(BaseModel):
 
     # Per-activity breakdown
     activities: list[ActivityEVMResponse]
+
+    model_config = {"json_encoders": {Decimal: float}}
