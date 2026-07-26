@@ -235,6 +235,11 @@ Ver `docs/architecture/` y `AI_PROCESS.md` para más detalles.
 | EAC | `BAC / CPI` | Estimate at Completion |
 | VAC | `BAC − EAC` | > 0: Under budget, < 0: Over budget |
 
+
+<img width="1458" height="729" alt="image" src="https://github.com/user-attachments/assets/bf78dc34-43e3-4e81-bd5c-b988c621180e" />
+
+<img width="1312" height="458" alt="image" src="https://github.com/user-attachments/assets/ea25634f-a53d-40bc-b3c4-f0ee64129e60" />
+
 ---
 
 ## 📝 Licencia
