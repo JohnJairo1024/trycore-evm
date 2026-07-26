@@ -7,11 +7,9 @@ Eliminates duplication of update/delete patterns across services.
 import uuid
 from typing import Generic, TypeVar
 
-from sqlalchemy import select
+from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import declarative_base
-
-from pydantic import BaseModel
 
 ModelT = TypeVar("ModelT", bound=declarative_base())
 UpdateSchemaT = TypeVar("UpdateSchemaT", bound=BaseModel)

@@ -3,7 +3,6 @@ Activity service — business logic for activity CRUD operations.
 """
 
 import uuid
-from decimal import Decimal
 from typing import Sequence
 
 from sqlalchemy import select
@@ -20,6 +19,7 @@ class ActivityService(BaseService[Activity, ActivityUpdate]):
     _model = Activity
 
     def __init__(self, db: AsyncSession):
+        super().__init__(db)
         self.db = db
 
     async def create(self, project_id: uuid.UUID, data: ActivityCreate) -> Activity:

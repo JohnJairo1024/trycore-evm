@@ -19,6 +19,7 @@ class ProjectService(BaseService[Project, ProjectUpdate]):
     _model = Project
 
     def __init__(self, db: AsyncSession):
+        super().__init__(db)
         self.db = db
 
     async def create(self, data: ProjectCreate) -> Project:
