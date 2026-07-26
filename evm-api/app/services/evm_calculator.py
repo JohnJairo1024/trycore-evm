@@ -43,6 +43,14 @@ SPI_INTERPRETATIONS: dict[str, EVMInterpretation] = {
 
 # ── Helpers ──────────────────────────────────────────────────────
 
+DECIMAL_PLACES = Decimal("0.01")
+
+
+def _round(value: Decimal) -> Decimal:
+    """Round a Decimal value to 2 decimal places (standard for currency)."""
+    return value.quantize(DECIMAL_PLACES)
+
+
 def _interpret_cpi(cpi: Decimal, total_ac: Decimal) -> EVMInterpretation:
     """Determine the human-readable interpretation of a CPI value."""
     if total_ac == ZERO:
@@ -87,18 +95,18 @@ def calculate_activity_evm(activity: Activity) -> ActivityEVMResponse:
     ac = activity.actual_cost
 
     # Basic calculations
-    pv = (bac * planned_pct / HUNDRED).quantize(Decimal("0.01"))
-    ev = (bac * actual_pct / HUNDRED).quantize(Decimal("0.01"))
-    cv = (ev - ac).quantize(Decimal("0.01"))
-    sv = (ev - pv).quantize(Decimal("0.01"))
+    pv = _round(bac * planned_pct / HUNDRED)
+    ev = _round(bac * actual_pct / HUNDRED)
+    cv = _round(ev - ac)
+    sv = _round(ev - pv)
 
     # Handle edge cases for CPI and SPI
-    cpi = (ev / ac).quantize(Decimal("0.01")) if ac > ZERO else ZERO
-    spi = (ev / pv).quantize(Decimal("0.01")) if pv > ZERO else ZERO
+    cpi = _round(ev / ac) if ac > ZERO else ZERO
+    spi = _round(ev / pv) if pv > ZERO else ZERO
 
     # Derived indicators
-    eac = (bac / cpi).quantize(Decimal("0.01")) if cpi > ZERO else ZERO
-    vac = (bac - eac).quantize(Decimal("0.01"))
+    eac = _round(bac / cpi) if cpi > ZERO else ZERO
+    vac = _round(bac - eac)
 
     return ActivityEVMResponse(
         activity_id=activity.id,
@@ -162,20 +170,20 @@ def calculate_project_evm(
     total_ev = sum((a.ev for a in activity_evm_list), ZERO)
 
     # Project-level indicators (calculated from consolidated totals)
-    cv = (total_ev - total_ac).quantize(Decimal("0.01"))
-    sv = (total_ev - total_pv).quantize(Decimal("0.01"))
-    cpi = (total_ev / total_ac).quantize(Decimal("0.01")) if total_ac > ZERO else ZERO
-    spi = (total_ev / total_pv).quantize(Decimal("0.01")) if total_pv > ZERO else ZERO
-    eac = (total_bac / cpi).quantize(Decimal("0.01")) if cpi > ZERO else ZERO
-    vac = (total_bac - eac).quantize(Decimal("0.01"))
+    cv = _round(total_ev - total_ac)
+    sv = _round(total_ev - total_pv)
+    cpi = _round(total_ev / total_ac) if total_ac > ZERO else ZERO
+    spi = _round(total_ev / total_pv) if total_pv > ZERO else ZERO
+    eac = _round(total_bac / cpi) if cpi > ZERO else ZERO
+    vac = _round(total_bac - eac)
 
     return ProjectEVMResponse(
         project_id=project_id,
         project_name=project_name,
-        total_bac=total_bac.quantize(Decimal("0.01")),
-        total_actual_cost=total_ac.quantize(Decimal("0.01")),
-        total_pv=total_pv.quantize(Decimal("0.01")),
-        total_ev=total_ev.quantize(Decimal("0.01")),
+        total_bac=_round(total_bac),
+        total_actual_cost=_round(total_ac),
+        total_pv=_round(total_pv),
+        total_ev=_round(total_ev),
         cv=cv,
         sv=sv,
         cpi=cpi,
