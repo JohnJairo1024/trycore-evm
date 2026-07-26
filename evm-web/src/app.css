@@ -1,0 +1,128 @@
+/* ============================================
+   EVM DASHBOARD — DESIGN SYSTEM
+   Tailwind CSS v4 Theme Configuration
+   ============================================ */
+
+@import "tailwindcss";
+
+@theme {
+  /* ---- 🎨 Color Palette ---- */
+
+  /* Primary (EVM Brand) */
+  --color-evm-primary: #2563eb;
+  --color-evm-primary-light: #dbeafe;
+  --color-evm-primary-dark: #1e40af;
+
+  /* Semantic: Saludable (Verde) */
+  --color-evm-success: #16a34a;
+  --color-evm-success-light: #dcfce7;
+  --color-evm-success-dark: #15803d;
+
+  /* Semantic: Alerta (Rojo) */
+  --color-evm-danger: #dc2626;
+  --color-evm-danger-light: #fef2f2;
+  --color-evm-danger-dark: #b91c1c;
+
+  /* Semantic: Informativo (Azul) */
+  --color-evm-info: #2563eb;
+  --color-evm-info-light: #eff6ff;
+
+  /* Semantic: Advertencia (Ámbar) */
+  --color-evm-warning: #d97706;
+  --color-evm-warning-light: #fffbeb;
+
+  /* Semantic: Sin datos (Gris) */
+  --color-evm-neutral: #6b7280;
+  --color-evm-neutral-light: #f3f4f6;
+  --color-evm-neutral-lighter: #e5e7eb;
+
+  /* Surface / Background */
+  --color-evm-surface: #f9fafb;
+  --color-evm-card: #ffffff;
+  --color-evm-border: #e5e7eb;
+  --color-evm-border-light: #f3f4f6;
+
+  /* Text */
+  --color-evm-text-primary: #111827;
+  --color-evm-text-secondary: #6b7280;
+  --color-evm-text-muted: #9ca3af;
+  --color-evm-text-inverse: #ffffff;
+
+  /* Chart Colors */
+  --color-chart-pv: #2563eb;
+  --color-chart-ev: #16a34a;
+  --color-chart-ac: #dc2626;
+
+  /* ---- 🔤 Typography ---- */
+  --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* ---- 🌓 Shadows ---- */
+  --shadow-evm-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-evm-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-evm-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-evm-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+/* ---- Base Styles ---- */
+body {
+  margin: 0;
+  font-family: var(--font-family-sans);
+  background-color: var(--color-evm-surface);
+  color: var(--color-evm-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Focus visible global */
+*:focus-visible {
+  outline: 2px solid var(--color-evm-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ---- Animations ---- */
+@keyframes pulse-evm {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-pulse-evm {
+  animation: pulse-evm 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 200ms ease-out;
+}
+
+.animate-zoomIn {
+  animation: zoomIn 200ms ease-out;
+}
+
+.animate-slideUp {
+  animation: slideUp 300ms ease-out;
+}
