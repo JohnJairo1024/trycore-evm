@@ -56,6 +56,22 @@ def _safe_divide(numerator: Decimal, denominator: Decimal) -> Decimal:
     return _round(numerator / denominator) if denominator > ZERO else ZERO
 
 
+def _compute_evm_metrics(
+    bac: Decimal, ev: Decimal, ac: Decimal, pv: Decimal
+) -> tuple[Decimal, Decimal, Decimal, Decimal, Decimal, Decimal]:
+    """Compute the 6 core EVM indicators from the 4 base values.
+
+    Returns (cv, sv, cpi, spi, eac, vac).
+    """
+    cv = _round(ev - ac)
+    sv = _round(ev - pv)
+    cpi = _safe_divide(ev, ac)
+    spi = _safe_divide(ev, pv)
+    eac = _safe_divide(bac, cpi)
+    vac = _round(bac - eac)
+    return cv, sv, cpi, spi, eac, vac
+
+
 def _interpret_cpi(cpi: Decimal, total_ac: Decimal) -> EVMInterpretation:
     """Determine the human-readable interpretation of a CPI value."""
     if total_ac == ZERO:
@@ -102,16 +118,9 @@ def calculate_activity_evm(activity: Activity) -> ActivityEVMResponse:
     # Basic calculations
     pv = _round(bac * planned_pct / HUNDRED)
     ev = _round(bac * actual_pct / HUNDRED)
-    cv = _round(ev - ac)
-    sv = _round(ev - pv)
 
-    # Handle edge cases for CPI and SPI
-    cpi = _safe_divide(ev, ac)
-    spi = _safe_divide(ev, pv)
-
-    # Derived indicators
-    eac = _safe_divide(bac, cpi)
-    vac = _round(bac - eac)
+    # Core EVM indicators (CV, SV, CPI, SPI, EAC, VAC)
+    cv, sv, cpi, spi, eac, vac = _compute_evm_metrics(bac, ev, ac, pv)
 
     return ActivityEVMResponse(
         activity_id=activity.id,
@@ -175,12 +184,7 @@ def calculate_project_evm(
     total_ev = sum((a.ev for a in activity_evm_list), ZERO)
 
     # Project-level indicators (calculated from consolidated totals)
-    cv = _round(total_ev - total_ac)
-    sv = _round(total_ev - total_pv)
-    cpi = _safe_divide(total_ev, total_ac)
-    spi = _safe_divide(total_ev, total_pv)
-    eac = _safe_divide(total_bac, cpi)
-    vac = _round(total_bac - eac)
+    cv, sv, cpi, spi, eac, vac = _compute_evm_metrics(total_bac, total_ev, total_ac, total_pv)
 
     return ProjectEVMResponse(
         project_id=project_id,
