@@ -3,6 +3,7 @@ Pydantic schemas for Project CRUD.
 """
 
 from datetime import datetime
+from decimal import Decimal
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -49,7 +50,7 @@ class ProjectResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    model_config = {"from_attributes": True}
+    model_config = {"from_attributes": True, "json_encoders": {Decimal: float}}
 
 
 class ProjectListResponse(BaseModel):
