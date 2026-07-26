@@ -28,8 +28,8 @@ Thumbs.db
 # Documentation
 docs/
 
-# Batch scripts
-*.bat
+# Batch scripts (only root level)
+/*.bat
 
 # Testing
 .pytest_cache/
