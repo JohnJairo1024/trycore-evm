@@ -31,7 +31,7 @@ function apiUrl(path: string): string {
   return `http://localhost:8000${BASE_URL}${path}`;
 }
 
-async function request<T>(url: string, options?: RequestInit): Promise<Response> {
+async function request(url: string, options?: RequestInit): Promise<Response> {
   const response = await fetch(apiUrl(url), {
     headers: {
       'Content-Type': 'application/json',
@@ -88,8 +88,8 @@ export async function getProjectEVM(projectId: string): Promise<ProjectEVM> {
 /** Obtener actividades de un proyecto */
 export async function getActivities(projectId: string): Promise<Activity[]> {
   const res = await request(`/projects/${projectId}/activities`);
-  const raw: unknown[] = await res.json();
-  return raw.map(mapActivity);
+  const raw = await res.json();
+  return (raw as any[]).map(mapActivity);
 }
 
 /** Crear una actividad */

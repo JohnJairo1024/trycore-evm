@@ -17,8 +17,6 @@ import {
   deleteActivity,
 } from '../api';
 
-const API_BASE = 'http://localhost:8000/api/v1';
-
 // Mock the apiUrl function indirectly by setting up a test helper
 const originalFetch = globalThis.fetch;
 
