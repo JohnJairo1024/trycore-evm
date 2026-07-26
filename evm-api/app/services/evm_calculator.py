@@ -51,6 +51,11 @@ def _round(value: Decimal) -> Decimal:
     return value.quantize(DECIMAL_PLACES)
 
 
+def _safe_divide(numerator: Decimal, denominator: Decimal) -> Decimal:
+    """Divide and round, returning ZERO if denominator is zero (avoid div by zero)."""
+    return _round(numerator / denominator) if denominator > ZERO else ZERO
+
+
 def _interpret_cpi(cpi: Decimal, total_ac: Decimal) -> EVMInterpretation:
     """Determine the human-readable interpretation of a CPI value."""
     if total_ac == ZERO:
@@ -101,11 +106,11 @@ def calculate_activity_evm(activity: Activity) -> ActivityEVMResponse:
     sv = _round(ev - pv)
 
     # Handle edge cases for CPI and SPI
-    cpi = _round(ev / ac) if ac > ZERO else ZERO
-    spi = _round(ev / pv) if pv > ZERO else ZERO
+    cpi = _safe_divide(ev, ac)
+    spi = _safe_divide(ev, pv)
 
     # Derived indicators
-    eac = _round(bac / cpi) if cpi > ZERO else ZERO
+    eac = _safe_divide(bac, cpi)
     vac = _round(bac - eac)
 
     return ActivityEVMResponse(
@@ -172,9 +177,9 @@ def calculate_project_evm(
     # Project-level indicators (calculated from consolidated totals)
     cv = _round(total_ev - total_ac)
     sv = _round(total_ev - total_pv)
-    cpi = _round(total_ev / total_ac) if total_ac > ZERO else ZERO
-    spi = _round(total_ev / total_pv) if total_pv > ZERO else ZERO
-    eac = _round(total_bac / cpi) if cpi > ZERO else ZERO
+    cpi = _safe_divide(total_ev, total_ac)
+    spi = _safe_divide(total_ev, total_pv)
+    eac = _safe_divide(total_bac, cpi)
     vac = _round(total_bac - eac)
 
     return ProjectEVMResponse(
