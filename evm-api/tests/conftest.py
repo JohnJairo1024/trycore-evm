@@ -8,13 +8,10 @@ Provides:
   - Factory fixtures for sample projects and activities
 """
 
-import asyncio
-import uuid
 from decimal import Decimal
-from typing import AsyncGenerator, Generator
+from typing import AsyncGenerator
 from uuid import UUID
 
-import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
@@ -32,14 +29,6 @@ test_async_session_factory = async_sessionmaker(
     class_=AsyncSession,
     expire_on_commit=False,
 )
-
-
-@pytest.fixture(scope="session")
-def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
-    """Create a single event loop for the entire test session."""
-    loop = asyncio.new_event_loop()
-    yield loop
-    loop.close()
 
 
 async def _override_get_db() -> AsyncGenerator[AsyncSession, None]:
@@ -89,6 +78,7 @@ async def db_session() -> AsyncGenerator[AsyncSession, None]:
 
 PROJECT_UUID = UUID("a1000000-0000-0000-0000-000000000001")
 ACTIVITY_UUID = UUID("b1000000-0000-0000-0000-000000000001")
+ZERO = Decimal("0")
 
 
 @pytest_asyncio.fixture
